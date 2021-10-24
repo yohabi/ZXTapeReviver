@@ -32,6 +32,7 @@ WavReader::ErrorCodesEnum WavReader::setFileName(const QString& fileName)
 {
     if (!mWavOpened) {
         mWavFile.setFileName(fileName);
+        currentFileName = mWavFile.fileName();
         return Ok;
     }
     return AlreadyOpened;

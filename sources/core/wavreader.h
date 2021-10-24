@@ -122,6 +122,9 @@ protected:
     explicit WavReader(QObject* parent = nullptr);
 
 public:
+
+    QString currentFileName = "";
+
     enum ErrorCodesEnum {
         Ok,
         AlreadyOpened,

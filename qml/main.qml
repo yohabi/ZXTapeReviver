@@ -418,7 +418,13 @@ ApplicationWindow {
         Button {
             id: reparseButton
 
-            text: "Reparse"
+            Shortcut {
+                sequences: ["r", "Shift+r"]
+                autoRepeat: false
+                onActivated: reparseButton.clicked()
+            }
+
+            text: "Reparse (r, Shift+r)"
             anchors.top: shiftWaveLeft.bottom
             anchors.right: parent.right
             anchors.rightMargin: 5

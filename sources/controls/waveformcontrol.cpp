@@ -103,6 +103,7 @@ void WaveformControl::paint(QPainter* painter)
     painter->drawText(3, 3, 100 - 3, 20, Qt::AlignTop | Qt::AlignLeft, QString::number(posStartSec, 'f', 3) + " sec");
     painter->drawText((int) bRect.width() / 2 + 3, 3, 100 - 3, 20, Qt::AlignTop | Qt::AlignLeft, QString::number(posMidSec, 'f', 3) + " sec");
     painter->drawText((int) bRect.width() - 100, 3, 100 - 3, 20, Qt::AlignTop | Qt::AlignRight, QString::number(posEndSec, 'f', 3) + " sec");
+    painter->drawText(3, 19, bRect.width() - 6, 20, Qt::AlignTop | Qt::AlignLeft, mWavReader.currentFileName);
     p.setColor(m_customData.yAxisColor());
     p.setWidth(1);
     p.setStyle(Qt::DashLine);
@@ -304,9 +305,6 @@ void WaveformControl::mousePressEvent(QMouseEvent* event)
             return;
         }
         double dpoint = point * dx;
-        const double waveHeight = boundingRect().height() - 100;
-        const double halfHeight = waveHeight / 2;
-
         if (m_operationMode == WaveformRepairMode) {
             if (event->button() == Qt::MiddleButton) {
                 //const auto p = point + getWavePos();
@@ -317,22 +315,16 @@ void WaveformControl::mousePressEvent(QMouseEvent* event)
             }
             else {
                 if (dpoint >= (event->x() - dx/2) && dpoint <= (event->x() + dx/2)) {
-                    const double maxy = getYScaleFactor();
-                    double y = halfHeight - ((double) (getChannel()->operator[](m_clickPosition)) / maxy) * waveHeight;
-                    if (!m_customData.checkVerticalRange() || (y >= event->y() - 2 && y <= event->y() + 2)) {
-                        if (event->button() == Qt::LeftButton) {
-                            m_pointIndex = point;
-                            m_pointGrabbed = true;
-                            qDebug() << "Grabbed point: " << getChannel()->operator[](m_clickPosition);
-                        }
-                        else {
-                            if (QGuiApplication::queryKeyboardModifiers() != Qt::ShiftModifier)
-                            {
-                                m_pointGrabbed = false;
-                                qDebug() << "Deleting point";
-                                getChannel()->remove(m_clickPosition);
-                                update();
-                            }
+                    if (event->button() == Qt::LeftButton) {
+                        m_pointIndex = point;
+                        m_pointGrabbed = true;
+                        qDebug() << "Grabbed point: " << getChannel()->operator[](m_clickPosition);
+                    } else {
+                        if (QGuiApplication::queryKeyboardModifiers() != Qt::ShiftModifier) {
+                            m_pointGrabbed = false;
+                            qDebug() << "Deleting point";
+                            getChannel()->remove(m_clickPosition);
+                            update();
                         }
                     }
                 }
